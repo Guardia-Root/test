@@ -15,6 +15,3 @@ textFile.WriteLine ""
 textFile.WriteLine "Vous pouvez modifier ce texte comme vous le souhaitez."
 textFile.Close
 
-' Afficher un message de confirmation
-MsgBox "✅ Fichier créé avec succès !" & vbCrLf & vbCrLf & _
-       "Chemin : " & outputFile, vbInformation, "OK"
