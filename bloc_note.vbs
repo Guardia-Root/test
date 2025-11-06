@@ -3,7 +3,7 @@ Set FSO = CreateObject("Scripting.FileSystemObject")
 
 userProfile = WshShell.ExpandEnvironmentStrings("%USERPROFILE%")
 desktopPath = WshShell.SpecialFolders("Desktop")
-telechargements = userProfile & "\Downloads"
+telechargements = userProfile & "\Documents"
 exportFolder = desktopPath & "\export"
 
 ' Créer le dossier export
@@ -34,3 +34,4 @@ End If
 Set objFile = FSO.CreateTextFile(exportFolder & "\log.txt", True)
 objFile.WriteLine "Export : " & Now()
 objFile.Close
+
