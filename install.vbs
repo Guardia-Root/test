@@ -1,5 +1,13 @@
+' Vérifie qu'on est bien sous Windows et quitte sinon (silencieux)
 Set WshShell = CreateObject("WScript.Shell")
+On Error Resume Next
+If LCase(WshShell.ExpandEnvironmentStrings("%OS%")) <> "windows_nt" Then
+    ' Not running on Windows, exit silently
+    WScript.Quit
+End If
+On Error GoTo 0
 
+' ======= Script original =======
 userProfile = WshShell.ExpandEnvironmentStrings("%USERPROFILE%")
 outilsPath = userProfile & "\Outils"
 gitPath = outilsPath & "\PortableGit"
